@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AcaDexa{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .nav-menu li a.active {
+            font-weight: bold;
+            background-color: #001f3f; 
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        .nav-brand a {
+            display: flex;
+            align-items: center;
+            gap: 10px; /
+        }
+        .nav-brand img {
+            height: 50px; 
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="AcaDexa Logo"> 
+                    AcaDexa
+                </a>
+            </div>
+            <ul class="nav-menu">
+                {% if session.user_id %}
+                    <li><a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+                    <li><a href="{{ url_for('search') }}" class="{% if request.endpoint == 'search' %}active{% endif %}">Search</a></li>
+                    <li><a href="{{ url_for('upload_note') }}" class="{% if request.endpoint == 'upload_note' %}active{% endif %}">Upload</a></li>
+                    {% if session.is_admin %}
+                        <li><a href="{{ url_for('admin_dashboard') }}" class="{% if request.endpoint == 'admin_dashboard' %}active{% endif %}">Admin</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('profile') }}" class="{% if request.endpoint == 'profile' %}active{% endif %}">Profile</a></li>
+                    <li><a href="{{ url_for('logout') }}" class="{% if request.endpoint == 'logout' %}active{% endif %}" class="btn-logout">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">Login</a></li>
+                    <li><a href="{{ url_for('signup') }}" class="{% if request.endpoint == 'signup' %}active{% endif %}" class="btn-primary">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 AcaDexa - Applied Mathematics and Computing Resource Hub</p>
+            <p>Developed by: 2020ASP13, 2020ASP49, 2020ASP68</p>
+        </div>
+    </footer>
+</body>
+</html>

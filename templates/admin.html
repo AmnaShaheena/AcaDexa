@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - AcaDexa{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <h1>Admin Dashboard</h1>
+    
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3>{{ pending_notes|length }}</h3>
+            <p>Pending Approvals</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ users|length }}</h3>
+            <p>Total Users</p>
+        </div>
+    </div>
+    
+    <section class="admin-section">
+        <h2>Pending Note Approvals</h2>
+        {% if pending_notes %}
+        <div class="note-list">
+            {% for note in pending_notes %}
+            <div class="note-item pending">
+                <div class="note-info">
+                    <h3>{{ note.title }}</h3>
+                    <p>{{ note.description }}</p>
+                    <div class="note-meta">
+                        <span>Module: {{ note.module.code }}</span>
+                        <span>Uploader: User #{{ note.uploader_id }}</span>
+                        <span>{{ note.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        <span class="file-type">{{ note.file_type.upper() }}</span>
+                    </div>
+                </div>
+                <div class="note-actions">
+                    <a href="{{ url_for('approve_note', note_id=note.id) }}" class="btn btn-primary btn-small">Approve</a>
+                    <a href="{{ url_for('download_note', note_id=note.id) }}" class="btn btn-secondary btn-small">Preview</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">No pending notes to approve.</p>
+        {% endif %}
+    </section>
+    
+    <section class="admin-section">
+        <h2>User Management</h2>
+        <div class="table-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Year</th>
+                        <th>Admin</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>Year {{ user.year }}</td>
+                        <td>{% if user.is_admin %}✓{% else %}✗{% endif %}</td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+<section class="admin-section">
+    <h2>All Modules</h2>
+    
+    {% for year in range(1, 5) %}
+        <div class="year-subsection" style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+            <h3 style="text-align: center;">Year {{ year }}</h3>
+            {% set year_courses = courses|selectattr('year', 'equalto', year)|list %}
+            {% if year_courses %}
+                <!-- Semester 1 Subsection -->
+                {% set sem1_courses = year_courses|selectattr('name', 'equalto', 'Semester 1')|list %}
+                {% if sem1_courses %}
+                <div class="semester-subsection">
+                    <h4>Semester 1</h4>
+                    <div class="course-grid">
+                        {% for course in sem1_courses %}
+                            {% for module in course.modules %}
+                            <div class="course-card">
+                                <h3>{{ module.code }}</h3>
+                                <p>{{ module.name }} (Course: {{ course.code }})</p>
+                                <a href="{{ url_for('module_detail', module_id=module.id) }}" class="btn btn-secondary btn-small">View Details</a>
+                            </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Semester 2 Subsection -->
+                {% set sem2_courses = year_courses|selectattr('name', 'equalto', 'Semester 2')|list %}
+                {% if sem2_courses %}
+                <div class="semester-subsection">
+                    <h4>Semester 2</h4>
+                    <div class="course-grid">
+                        {% for course in sem2_courses %}
+                            {% for module in course.modules %}
+                            <div class="course-card">
+                                <h3>{{ module.code }}</h3>
+                                <p>{{ module.name }} (Course: {{ course.code }})</p>
+                                <a href="{{ url_for('module_detail', module_id=module.id) }}" class="btn btn-secondary btn-small">View Details</a>
+                            </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% else %}
+            <p class="no-data">No modules available for Year {{ year }}.</p>
+            {% endif %}
+        </div>
+        
+    {% endfor %}
+</section>
+</div>
+{% endblock %}
+
+

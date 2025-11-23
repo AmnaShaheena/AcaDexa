@@ -1,0 +1,38 @@
+-- database: ./acadexa.db
+
+SELECT * FROM module;
+-- Step 1: Create temp table with data (excluding course_id)
+CREATE TEMPORARY TABLE module_temp AS 
+SELECT id, code, name FROM module;
+
+-- Step 2: Drop old table, recreate without course_id
+DROP TABLE module;
+
+CREATE TABLE module (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code VARCHAR(20) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL
+);
+
+
+INSERT INTO module (id, code, name) 
+SELECT id, code, name FROM module_temp;
+
+
+DROP TABLE module_temp;
+
+
+CREATE TABLE module_course (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    module_id INTEGER NOT NULL REFERENCES module(id) ON DELETE CASCADE,
+    course_id INTEGER NOT NULL REFERENCES course(id) ON DELETE CASCADE,
+    UNIQUE(module_id, course_id)
+);
+
+
+INSERT INTO module_course (module_id, course_id)
+SELECT m.id, m2.course_id 
+FROM module m 
+JOIN (SELECT id AS old_id, course_id FROM module) m2 ON m.id = m2.old_id 
+WHERE m2.course_id IS NOT NULL;
+

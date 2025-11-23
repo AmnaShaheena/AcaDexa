@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AcaDexa{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Welcome, {{ session.username }}!</h1>
+    <p class="subtitle">Year {{ session.year }} -
+        {% if session.year == 4 %}
+            Computer Science
+        {% elif session.year == 3 %}
+            Applied Mathematics and Computing / Computer Science
+        {% else %}
+            Applied Mathematics and Computing
+        {% endif %}
+    </p>
+    
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3>{{ courses|length }}</h3>
+            <p>Your Courses</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ recent_notes|length }}</h3>
+            <p>Recent Notes</p>
+        </div>
+    </div>
+    
+    <section class="dashboard-section">
+        <h2>Your Courses (Year {{ session.year }})</h2>
+        {% if courses %}
+        <div class="course-grid">
+            {% for course in courses %}
+            <div class="course-card">
+                <h3>{{ course.code }}</h3>
+                <p>{{ course.name }}</p>
+                <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-secondary btn-small">View Modules</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">No courses available for your year.</p>
+        {% endif %}
+    </section>
+    
+    <section class="dashboard-section">
+        <h2>Recent Notes</h2>
+        {% if recent_notes %}
+        <div class="note-list">
+            {% for note in recent_notes %}
+            <div class="note-item">
+                <div class="note-info">
+                    <h4>{{ note.title }}</h4>
+                    <p>{{ note.description[:100] }}...</p>
+                    <span class="note-meta">Uploaded: {{ note.uploaded_at.strftime('%Y-%m-%d') }}</span>
+                </div>
+                <a href="{{ url_for('download_note', note_id=note.id) }}" class="btn btn-primary btn-small">Download</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">No recent notes available.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

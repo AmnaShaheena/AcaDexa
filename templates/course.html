@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.name }} - AcaDexa{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
+    <h1>{{ course.code }}: {{ course.name }}</h1>
+    <p class="subtitle">Year {{ course.year }} Course</p>
+</div>
+
+<section>
+    <h2>Modules</h2>
+    {% if modules %}
+    <div class="module-grid">
+        {% for module in modules %}
+        <div class="module-card">
+            <h3>{{ module.code }}</h3>
+            <p>{{ module.name }}</p>
+            <a href="{{ url_for('module_detail', module_id=module.id) }}" class="btn btn-primary btn-small">View Notes</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-data">No modules available for this course yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - AcaDexa{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="profile-header">
+        <div class="profile-avatar">{{ user.username[0].upper() }}</div>
+        <div class="profile-info">
+            <h1>{{ user.username }}</h1>
+            <p>{{ user.email }}</p>
+            <span class="badge">Year {{ user.year }}</span>
+            {% if user.is_admin %}
+            <span class="badge badge-admin">Admin</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="profile-stats">
+        <div class="stat-card">
+            <h3>{{ notes|length }}</h3>
+            <p>Notes Uploaded</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ user.created_at.strftime('%b %Y') }}</h3>
+            <p>Member Since</p>
+        </div>
+    </div>
+    
+    <section class="profile-section">
+        <h2>My Uploaded Notes</h2>
+        {% if notes %}
+        <div class="note-list">
+            {% for note in notes %}
+            <div class="note-item {% if not note.approved %}pending{% endif %}">
+                <div class="note-info">
+                    <h3>{{ note.title }}</h3>
+                    <p>{{ note.description }}</p>
+                    <div class="note-meta">
+                        <span>{{ note.module.code }}</span>
+                        <span>{{ note.uploaded_at.strftime('%Y-%m-%d') }}</span>
+                        <span class="file-type">{{ note.file_type.upper() }}</span>
+                        {% if not note.approved %}
+                        <span class="status-badge pending">Pending Approval</span>
+                        {% else %}
+                        <span class="status-badge approved">Approved</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{{ url_for('download_note', note_id=note.id) }}" class="btn btn-secondary btn-small">Download</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">You haven't uploaded any notes yet.</p>
+        <a href="{{ url_for('upload_note') }}" class="btn btn-primary">Upload Your First Note</a>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

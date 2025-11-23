@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}AcaDexa - Academic Resource Hub{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Welcome to AcaDexa</h1>
+    <p class="hero-subtitle">Your Centralized Academic Resource Management System</p>
+    <p>Access notes, past papers, and course materials for Applied Mathematics and Computing and Computer Science</p>
+    
+    {% if not session.user_id %}
+    <div class="hero-buttons">
+        <a href="{{ url_for('signup') }}" class="btn btn-primary btn-large">Get Started</a>
+        <a href="{{ url_for('login') }}" class="btn btn-secondary btn-large">Login</a>
+    </div>
+    {% else %}
+    <div class="hero-buttons">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-large">Go to Dashboard</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="features">
+    <h2>Key Features</h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3>Centralized Hub</h3>
+            <p>Access all your academic resources in one convenient location</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Easy Search</h3>
+            <p>Quickly find notes, modules, and courses with powerful search</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📤</div>
+            <h3>Share Resources</h3>
+            <p>Upload and share study materials with your peers</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Personalized Access</h3>
+            <p>View content tailored to your academic year and courses</p>
+        </div>
+    </div>
+</div>
+
+<div class="info-section">
+    <h2>For Students</h2>
+    <p>Access comprehensive study materials, past papers, and course resources organized by year and module. Collaborate with peers and stay updated on new resources.</p>
+    
+    <h2>Built with Python</h2>
+    <p>AcaDexa is built entirely in Python using Flask, ensuring a robust, scalable, and maintainable platform for all your academic needs.</p>
+</div>
+{% endblock %}
